@@ -37,4 +37,4 @@ class Tesseract:
         # tesseract command line
         command = f'tesseract -l {language} -psm {seg} {image} stdout'
 
-        return command
+		return command
