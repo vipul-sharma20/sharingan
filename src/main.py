@@ -1,6 +1,7 @@
 import sys
 
 import cv2
+import numpy as np
 
 from tesseract import Tesseract
 from constants import WINDOW, POINT_COLOR
@@ -25,6 +26,7 @@ class Image:
 
     def __init__(self, image: str, *args, **kwargs):
         self.image = cv2.imread(image, 0)
+        self.path = []
 
     def threshold(self, thresh_type: int, block_size: int, c: int,
                   callback=False, **kwargs):
@@ -53,7 +55,15 @@ class Image:
         raise NotImplementedError
 
     def crop(self, *args, **kwargs):
-        raise NotImplementedError
+        mask = np.zeros(self.image.shape, dtype=np.uint8)
+        roi_corners = np.array([self.path], dtype=np.int32)
+        channel_count = 2
+        ignore_mask_color = (255,) * channel_count
+        cv2.fillPoly(mask, roi_corners, ignore_mask_color)
+
+        masked_image = cv2.bitwise_and(self.image, mask)
+
+        cv2.imwrite('test.jpg', masked_image)
 
     def get_text(self, *args, **kwargs) -> str:
         """
@@ -99,15 +109,22 @@ class Image:
             cv2.imshow(c.WINDOW, thresh_img)
             self._wait_key(1, c.WINDOW)
 
-    def show_image(self, *args, **kwargs):
+    def show_image(self, is_crop=True, *args, **kwargs):
         """
         Show original image image
         """
         cv2.namedWindow(WINDOW)
-        cv2.setMouseCallback(WINDOW, self._mouse_click_callback)
-        while True:
-            cv2.imshow(WINDOW, self.image)
-            self._wait_key(20, WINDOW)
+
+        if is_crop:
+            cv2.setMouseCallback(WINDOW, self._mouse_crop_callback)
+            while True:
+                cv2.imshow(WINDOW, self.image)
+                self._wait_key(20, WINDOW)
+        else:
+            cv2.setMouseCallback(WINDOW, self._mouse_click_callback)
+            while True:
+                cv2.imshow(WINDOW, self.image)
+                self._wait_key(20, WINDOW)
 
     def _callback_thresh(self, preset: int, *args, **kwargs):
         """
@@ -137,7 +154,29 @@ class Image:
         :returns: None
         """
         if event == cv2.EVENT_LBUTTONUP:
+            self.path.append((x, y))
             cv2.circle(self.image, (x, y), 4, POINT_COLOR, -1)
+
+    def _mouse_crop_callback(self, event: int, x: int, y: int, *args, **kwargs):
+        global img, start_x, start_y, rectangle
+
+        if event == cv2.EVENT_LBUTTONDOWN:
+            rectangle = True
+            start_x = x
+            start_y = y
+            img = self.image.copy()
+            cv2.rectangle(img, (x, y), (x, y), (255, 255, 0))
+
+        elif event == cv2.EVENT_LBUTTONUP:
+            rectangle = False
+            img = self.image.copy()
+            cv2.rectangle(self.image, (start_x, start_y), (x, y), (255, 255, 0))
+
+        elif event == cv2.EVENT_MOUSEMOVE:
+            if rectangle:
+                img = self.image.copy()
+                cv2.rectangle(self.image, (start_x, start_y), (x, y),
+                              (255, 255, 0))
 
     def _wait_key(self, k: int, window: str, type=None, *args, **kwargs):
         """
@@ -152,5 +191,5 @@ class Image:
         if k == 27:
             cv2.destroyAllWindows()
         elif k == 13:
-            pass
+            self.crop()
 
