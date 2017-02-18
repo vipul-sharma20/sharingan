@@ -154,7 +154,17 @@ class Image:
                 x, y, w, h = rect
                 b, g, r = random.sample(range(0, 255), 3)
                 cv2.rectangle(self.draw_image, (x,y), (x+w, y+h), (b, g, r), 2)
+
+        return self.draw_image
+
+    def _callback_thresh(self, preset: int, *args, **kwargs):
         """
+        Trackbar change callback
+
+        :param preset: preset value from trackbar
+        :returns: None
+        """
+
         t = Image.THRESHOLD
 
         # get preset odd value
