@@ -1,4 +1,3 @@
-import random
 import sys
 
 import cv2
@@ -26,10 +25,10 @@ class Image:
         c = 2
 
     def __init__(self, image: str, *args, **kwargs):
-        self.draw_image = cv2.imread(image)
-        self.image = cv2.cvtColor(self.draw_image, cv2.COLOR_BGR2GRAY)
+        self.image = cv2.imread(image, 0)
         self.path = []
         self.rectangle = False
+        self.roi = []
 
     def threshold(self, thresh_type: int, block_size: int, c: int,
                   callback=False, **kwargs):
@@ -58,11 +57,6 @@ class Image:
         raise NotImplementedError
 
     def crop(self, *args, **kwargs):
-        """
-        Crop by the coordinates of mouse clicks
-
-        :returns: None
-        """
         mask = np.zeros(self.image.shape, dtype=np.uint8)
         roi_corners = np.array([self.path], dtype=np.int32)
         channel_count = 2
@@ -90,14 +84,12 @@ class Image:
         Resize large dimesion images
 
         :param img: Large dimension image to be resized
-        :param resize_by: times by which to resize
         :returns: resized image
         """
         new_x, new_y = self.image.shape[1] // resize_by, \
                        self.image.shape[0] // resize_by
 
         self.image = cv2.resize(self.image, (new_x, new_y))
-        self.draw_image = cv2.resize(self.draw_image, (new_x, new_y))
 
     def show_thresh(self, thresh_img=None, *args, **kwargs):
         """
@@ -122,8 +114,6 @@ class Image:
     def show_image(self, is_crop=True, *args, **kwargs):
         """
         Show original image image
-
-        :param is_crop: handle mouse click or mouse drag (cropping)
         """
         cv2.namedWindow(WINDOW)
 
@@ -131,29 +121,19 @@ class Image:
             cv2.setMouseCallback(WINDOW, self._mouse_crop_callback)
             while True:
                 cv2.imshow(WINDOW, self.image)
-                self._wait_key(1, WINDOW)
+                self._wait_key(20, WINDOW)
         else:
             cv2.setMouseCallback(WINDOW, self._mouse_click_callback)
             while True:
                 cv2.imshow(WINDOW, self.image)
                 self._wait_key(20, WINDOW)
 
-    def auto_segment(self, *args, **kwargs):
+    def _callback_thresh(self, preset: int, *args, **kwargs):
         """
-        Auto segmentation of text
-        """
-        blur = cv2.GaussianBlur(self.image, (13, 13), 0)
-        edged = cv2.Canny(blur, 0, 50)
-        dilated = cv2.dilate(edged, np.ones((5, 5)))
+        Trackbar change callback
 
-        _, contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL,
-                                          cv2.CHAIN_APPROX_SIMPLE)
-        for contour in contours:
-            if not self._contour_approx_bad(contour):
-                rect = cv2.boundingRect(contour)
-                x, y, w, h = rect
-                b, g, r = random.sample(range(0, 255), 3)
-                cv2.rectangle(self.draw_image, (x,y), (x+w, y+h), (b, g, r), 2)
+        :param preset: preset value from trackbar
+        :returns: None
         """
         t = Image.THRESHOLD
 
@@ -180,32 +160,32 @@ class Image:
             cv2.circle(self.image, (x, y), 4, POINT_COLOR, -1)
 
     def _mouse_crop_callback(self, event: int, x: int, y: int, *args, **kwargs):
-        global start_x, start_y
+        global img, start_x, start_y, rectangle
 
         if event == cv2.EVENT_LBUTTONDOWN:
-            self.rectangle = True
+            rectangle = True
             start_x = x
             start_y = y
-            self.draw_image = self.image.copy()
-            cv2.rectangle(self.draw_image, (x, y), (x, y), (0, 255, 0))
+            img = self.image.copy()
+            cv2.rectangle(img, (x, y), (x, y), (255, 255, 0))
 
         elif event == cv2.EVENT_LBUTTONUP:
-            self.rectangle = False
-            self.draw_image = self.image.copy()
-            cv2.rectangle(self.draw_image, (start_x, start_y), (x, y), (0, 255, 0))
+            rectangle = False
+            img = self.image.copy()
+            cv2.rectangle(self.image, (start_x, start_y), (x, y), (255, 255, 0))
 
         elif event == cv2.EVENT_MOUSEMOVE:
-            if self.rectangle:
-                self.draw_image = self.image.copy()
+            if rectangle:
+                img = self.image.copy()
                 cv2.rectangle(self.image, (start_x, start_y), (x, y),
-                              (0, 255, 0))
+                              (255, 255, 0))
 
     def _wait_key(self, k: int, window: str, type=None, *args, **kwargs):
         """
         Wrapper around cv2.waitKey
 
         :param k: delay in ms
-        :param window: window name
+        :param window: windo name
         :param type: window type (TODO: WHY ?)
         :returns: None
         """
