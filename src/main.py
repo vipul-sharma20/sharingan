@@ -32,6 +32,7 @@ class Image:
         self.gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
         self.path = []
         self.rectangle = False
+        self.resize_factor = 1
 
     def threshold(self, thresh_type: int, block_size: int, c: int,
                   callback=False, **kwargs):
@@ -85,6 +86,7 @@ class Image:
         self.gray = cv2.resize(self.gray, (new_x, new_y))
         self.draw_image = cv2.resize(self.draw_image, (new_x, new_y))
         self.original = cv2.resize(self.draw_image, (new_x, new_y))
+        self.resize_factor = resize_by
 
     def show_thresh(self, thresh_img=None, *args, **kwargs):
         """
@@ -141,7 +143,7 @@ class Image:
         for i, contour in enumerate(contours):
             if not self._contour_approx_bad(contour):
                 rect = cv2.boundingRect(contour)
-                x, y, w, h = [r*4 for r in rect]
+                x, y, w, h = [r*self.resize_factor for r in rect]
                 b, g, r = random.sample(range(0, 255), 3)
                 cv2.rectangle(self.image, (x,y), ((x+w), (y+h)), (b, g, r), 2)
                 self.crop(name=str(i), **{'start': (x,y),
@@ -271,7 +273,8 @@ class Image:
         if k == 27:
             cv2.destroyAllWindows()
         elif k == 13:
-            self.crop(name='rect',
-                      **{'start': (self.path[0][0]*4, self.path[0][1]*4),
-                         'end': (self.path[1][0]*4, self.path[1][1]*4)})
+            # Dayum!
+            x1, y1, x2, y2 = [coord*self.resize_factor for sublist in self.path
+                              for coord in sublist]
+            self.crop(name='rect', **{'start': (x1, y1), 'end': (x2, y2)})
 
