@@ -59,22 +59,6 @@ class Image:
     def transform(self, *args, **kwargs):
         raise NotImplementedError
 
-    def crop(self, *args, **kwargs):
-        """
-        Crop by the coordinates of mouse clicks
-
-        :returns: None
-        """
-        mask = np.zeros(self.gray.shape, dtype=np.uint8)
-        roi_corners = np.array([self.path], dtype=np.int32)
-        channel_count = 2
-        ignore_mask_color = (255,) * channel_count
-        cv2.fillPoly(mask, roi_corners, ignore_mask_color)
-
-        masked_image = cv2.bitwise_and(self.gray, mask)
-
-        cv2.imwrite('test.jpg', masked_image)
-
     def get_text(self, *args, **kwargs) -> str:
         """
         Extract text from thresholded image
@@ -145,6 +129,8 @@ class Image:
     def auto_segment(self, *args, **kwargs):
         """
         Auto segmentation of text
+
+        :returns: None
         """
         blur = cv2.GaussianBlur(self.gray, (13, 13), 0)
         edged = cv2.Canny(blur, 0, 50)
@@ -152,20 +138,69 @@ class Image:
 
         _, contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL,
                                           cv2.CHAIN_APPROX_SIMPLE)
-        for contour in contours:
+        for i, contour in enumerate(contours):
             if not self._contour_approx_bad(contour):
                 rect = cv2.boundingRect(contour)
                 x, y, w, h = [r*4 for r in rect]
                 b, g, r = random.sample(range(0, 255), 3)
                 cv2.rectangle(self.image, (x,y), ((x+w), (y+h)), (b, g, r), 2)
+                self.crop(name=str(i), **{'start': (x,y),
+                                          'end': ((x+w), (y+h))})
 
         return self.image
 
+    def crop(self, name, is_poly=False, *args, **kwargs):
+        """
+        Crop image
+
+        :param name: File name to save
+        :param is_poly: True if polygon masked cropping
+        :returns: None
+        """
+        if is_poly:
+            self._crop_poly(name)
+        else:
+            self._crop_rect(name, **kwargs)
+
     def _contour_approx_bad(self, contour, *args, **kwargs):
+        """
+        Approximate contour and discard non rectangular contours
+
+        :returns: True if rectangle else False
+        """
         perimeter = cv2.arcLength(contour, True)
         approx = cv2.approxPolyDP(contour, 0.02*perimeter, True)
 
         return len(approx) == 4
+
+    def _crop_rect(self, name, **kwargs):
+        """
+        Crop rectangular image
+
+        :param start: top left coordinates
+        :param end: bottom right coordinates
+        :returns: None
+        """
+        x1, y1 = kwargs['start']
+        x2, y2 = kwargs['end']
+        crop_img = self.image[y1:y2, x1:x2]
+        cv2.imwrite(name+'.jpg', crop_img)
+
+    def _crop_poly(self, name, *args, **kwargs):
+        """
+        Crop by the coordinates of mouse clicks
+
+        :returns: None
+        """
+        mask = np.zeros(self.gray.shape, dtype=np.uint8)
+        roi_corners = np.array([self.path], dtype=np.int32)
+        channel_count = 2
+        ignore_mask_color = (255,) * channel_count
+        cv2.fillPoly(mask, roi_corners, ignore_mask_color)
+
+        masked_image = cv2.bitwise_and(self.gray, mask)
+
+        cv2.imwrite(name+'.jpg', masked_image)
 
     def _callback_thresh(self, preset: int, *args, **kwargs):
         """
@@ -214,7 +249,8 @@ class Image:
             self.rectangle = False
             self.draw_image = self.original.copy()
             self.path.extend([(start_x, start_y), (x, y)])
-            cv2.rectangle(self.draw_image, (start_x, start_y), (x, y), (0, 255, 0))
+            cv2.rectangle(self.draw_image, (start_x, start_y), (x, y),
+                          (0, 255, 0))
 
         elif event == cv2.EVENT_MOUSEMOVE:
             if self.rectangle:
@@ -235,7 +271,7 @@ class Image:
         if k == 27:
             cv2.destroyAllWindows()
         elif k == 13:
-            #self.crop()
-            crop_img = self.image[self.path[0][1]*4:self.path[1][1]*4,
-                                  self.path[0][0]*4:self.path[1][0]*4]
-            cv2.imwrite('rect.jpg', crop_img)
+            self.crop(name='rect',
+                      **{'start': (self.path[0][0]*4, self.path[0][1]*4),
+                         'end': (self.path[1][0]*4, self.path[1][1]*4)})
+
