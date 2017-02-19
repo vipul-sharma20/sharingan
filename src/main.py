@@ -26,8 +26,10 @@ class Image:
         c = 2
 
     def __init__(self, image: str, *args, **kwargs):
-        self.draw_image = cv2.imread(image)
-        self.image = cv2.cvtColor(self.draw_image, cv2.COLOR_BGR2GRAY)
+        self.original = cv2.imread(image)
+        self.image = self.original.copy()  # never changes
+        self.draw_image = self.original.copy()
+        self.gray = cv2.cvtColor(self.original, cv2.COLOR_BGR2GRAY)
         self.path = []
         self.rectangle = False
 
@@ -44,7 +46,7 @@ class Image:
         :returns: thresholded image
         """
         self.thresh_type = thresh_type
-        img = cv2.medianBlur(self.image, 5)
+        img = cv2.medianBlur(self.gray, 5)
 
         thresh_img = cv2.adaptiveThreshold(img, 255, thresh_type,
                                            cv2.THRESH_BINARY, block_size, c)
@@ -63,13 +65,13 @@ class Image:
 
         :returns: None
         """
-        mask = np.zeros(self.image.shape, dtype=np.uint8)
+        mask = np.zeros(self.gray.shape, dtype=np.uint8)
         roi_corners = np.array([self.path], dtype=np.int32)
         channel_count = 2
         ignore_mask_color = (255,) * channel_count
         cv2.fillPoly(mask, roi_corners, ignore_mask_color)
 
-        masked_image = cv2.bitwise_and(self.image, mask)
+        masked_image = cv2.bitwise_and(self.gray, mask)
 
         cv2.imwrite('test.jpg', masked_image)
 
@@ -93,11 +95,12 @@ class Image:
         :param resize_by: times by which to resize
         :returns: resized image
         """
-        new_x, new_y = self.image.shape[1] // resize_by, \
-                       self.image.shape[0] // resize_by
+        new_x, new_y = self.original.shape[1] // resize_by, \
+                       self.original.shape[0] // resize_by
 
-        self.image = cv2.resize(self.image, (new_x, new_y))
+        self.gray = cv2.resize(self.gray, (new_x, new_y))
         self.draw_image = cv2.resize(self.draw_image, (new_x, new_y))
+        self.original = cv2.resize(self.draw_image, (new_x, new_y))
 
     def show_thresh(self, thresh_img=None, *args, **kwargs):
         """
@@ -113,7 +116,7 @@ class Image:
         cv2.createTrackbar(c.TRACK_C, c.WINDOW, c.C_RANGE[0], c.C_RANGE[1],
                            self._callback_thresh)
         if thresh_img is None:
-            thresh_img = self.image
+            thresh_img = self.gray
 
         while True:
             cv2.imshow(c.WINDOW, thresh_img)
@@ -129,20 +132,21 @@ class Image:
 
         if is_crop:
             cv2.setMouseCallback(WINDOW, self._mouse_crop_callback)
+
             while True:
-                cv2.imshow(WINDOW, self.image)
+                cv2.imshow(WINDOW, self.draw_image)
                 self._wait_key(1, WINDOW)
         else:
             cv2.setMouseCallback(WINDOW, self._mouse_click_callback)
             while True:
-                cv2.imshow(WINDOW, self.image)
+                cv2.imshow(WINDOW, self.gray)
                 self._wait_key(20, WINDOW)
 
     def auto_segment(self, *args, **kwargs):
         """
         Auto segmentation of text
         """
-        blur = cv2.GaussianBlur(self.image, (13, 13), 0)
+        blur = cv2.GaussianBlur(self.gray, (13, 13), 0)
         edged = cv2.Canny(blur, 0, 50)
         dilated = cv2.dilate(edged, np.ones((5, 5)))
 
@@ -151,11 +155,17 @@ class Image:
         for contour in contours:
             if not self._contour_approx_bad(contour):
                 rect = cv2.boundingRect(contour)
-                x, y, w, h = rect
+                x, y, w, h = [r*4 for r in rect]
                 b, g, r = random.sample(range(0, 255), 3)
-                cv2.rectangle(self.draw_image, (x,y), (x+w, y+h), (b, g, r), 2)
+                cv2.rectangle(self.image, (x,y), ((x+w), (y+h)), (b, g, r), 2)
 
-        return self.draw_image
+        return self.image
+
+    def _contour_approx_bad(self, contour, *args, **kwargs):
+        perimeter = cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, 0.02*perimeter, True)
+
+        return len(approx) == 4
 
     def _callback_thresh(self, preset: int, *args, **kwargs):
         """
@@ -187,27 +197,29 @@ class Image:
         """
         if event == cv2.EVENT_LBUTTONUP:
             self.path.append((x, y))
-            cv2.circle(self.image, (x, y), 4, POINT_COLOR, -1)
+            cv2.circle(self.gray, (x, y), 4, POINT_COLOR, -1)
 
     def _mouse_crop_callback(self, event: int, x: int, y: int, *args, **kwargs):
         global start_x, start_y
 
         if event == cv2.EVENT_LBUTTONDOWN:
+            self.path = []
             self.rectangle = True
             start_x = x
             start_y = y
-            self.draw_image = self.image.copy()
+            self.draw_image = self.original.copy()
             cv2.rectangle(self.draw_image, (x, y), (x, y), (0, 255, 0))
 
         elif event == cv2.EVENT_LBUTTONUP:
             self.rectangle = False
-            self.draw_image = self.image.copy()
+            self.draw_image = self.original.copy()
+            self.path.extend([(start_x, start_y), (x, y)])
             cv2.rectangle(self.draw_image, (start_x, start_y), (x, y), (0, 255, 0))
 
         elif event == cv2.EVENT_MOUSEMOVE:
             if self.rectangle:
-                self.draw_image = self.image.copy()
-                cv2.rectangle(self.image, (start_x, start_y), (x, y),
+                self.draw_image = self.original.copy()
+                cv2.rectangle(self.draw_image, (start_x, start_y), (x, y),
                               (0, 255, 0))
 
     def _wait_key(self, k: int, window: str, type=None, *args, **kwargs):
@@ -223,5 +235,7 @@ class Image:
         if k == 27:
             cv2.destroyAllWindows()
         elif k == 13:
-            self.crop()
-
+            #self.crop()
+            crop_img = self.image[self.path[0][1]*4:self.path[1][1]*4,
+                                  self.path[0][0]*4:self.path[1][0]*4]
+            cv2.imwrite('rect.jpg', crop_img)
