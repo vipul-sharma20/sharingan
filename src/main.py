@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 
 from tesseract import Tesseract
-from constants import WINDOW, POINT_COLOR
+from constants import WINDOW, POINT_COLOR, SEGMENTED_PLACEHOLDER
 
 
 class Image:
@@ -184,7 +184,7 @@ class Image:
         x1, y1 = kwargs['start']
         x2, y2 = kwargs['end']
         crop_img = self.image[y1:y2, x1:x2]
-        cv2.imwrite(name+'.jpg', crop_img)
+        cv2.imwrite(SEGMENTED_PLACEHOLDER.format(name=name), crop_img)
 
     def _crop_poly(self, name, *args, **kwargs):
         """
@@ -200,7 +200,7 @@ class Image:
 
         masked_image = cv2.bitwise_and(self.gray, mask)
 
-        cv2.imwrite(name+'.jpg', masked_image)
+        cv2.imwrite(SEGMENTED_PLACEHOLDER.format(name=name), masked_image)
 
     def _callback_thresh(self, preset: int, *args, **kwargs):
         """
