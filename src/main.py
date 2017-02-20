@@ -1,5 +1,7 @@
 import random
 import sys
+import os
+from glob import glob
 
 import cv2
 import numpy as np
@@ -13,12 +15,14 @@ class Image:
     class THRESHOLD:
         MEAN = cv2.ADAPTIVE_THRESH_MEAN_C
         GAUSSIAN = cv2.ADAPTIVE_THRESH_GAUSSIAN_C
-        IMG_PATH = 'image_processed.jpg'
+        IMG_PATH = 'thresholded/{name}'
         WINDOW = 'threshold'
         TRACK_BLOCK = 'block_size'
         TRACK_C = 'constant'
         BLOCK_SIZE_RANGE = [1, 9]
         C_RANGE = [1, 10]
+        AUTO_BLOCK_SIZE = 17
+        AUTO_C = 6
 
         # OpenCV 3.2 doesn't allow parameters in callback so globals
         thresh_type = GAUSSIAN
@@ -35,7 +39,7 @@ class Image:
         self.resize_factor = 1
 
     def threshold(self, thresh_type: int, block_size: int, c: int,
-                  callback=False, **kwargs):
+                  auto_thresh=False, **kwargs):
         """
         Threshold image
 
@@ -47,15 +51,16 @@ class Image:
         :returns: thresholded image
         """
         self.thresh_type = thresh_type
-        img = cv2.medianBlur(self.gray, 5)
 
-        thresh_img = cv2.adaptiveThreshold(img, 255, thresh_type,
-                                           cv2.THRESH_BINARY, block_size, c)
-
-        # Temporary jugaad
-        cv2.imwrite(Image.THRESHOLD.IMG_PATH, thresh_img)
-
-        return thresh_img
+        if auto_thresh:
+            for i in glob('segmented/*.jpg'):
+                img = cv2.imread(i, 0)
+                self._threshold(img, thresh_type, block_size, c,
+                                os.path.basename(i))
+            return
+        else:
+            img = self.gray
+            return self._threshold(img, thresh_type, block_size, c, 't.jpg')
 
     def transform(self, *args, **kwargs):
         raise NotImplementedError
@@ -204,6 +209,16 @@ class Image:
 
         cv2.imwrite(SEGMENTED_PLACEHOLDER.format(name=name), masked_image)
 
+    def _threshold(self, img, thresh_type, block_size, c, name):
+        img = cv2.medianBlur(img, 5)
+
+        thresh_img = cv2.adaptiveThreshold(img, 255, thresh_type,
+                                           cv2.THRESH_BINARY, block_size, c)
+        # Temporary jugaad
+        cv2.imwrite(Image.THRESHOLD.IMG_PATH.format(name=name), thresh_img)
+
+        return thresh_img
+
     def _callback_thresh(self, preset: int, *args, **kwargs):
         """
         Trackbar change callback
@@ -218,7 +233,8 @@ class Image:
         t.block_size = cv2.getTrackbarPos(t.TRACK_BLOCK, t.WINDOW)*2 + 1
         t.c = cv2.getTrackbarPos(t.TRACK_C, t.WINDOW)
 
-        thresh_image = self.threshold(thresh_type=t.thresh_type, callback=True,
+        thresh_image = self.threshold(thresh_type=t.thresh_type,
+                                      auto_thresh=False,
                                       block_size=t.block_size, c=t.c)
         self.show_thresh(thresh_image)
 
