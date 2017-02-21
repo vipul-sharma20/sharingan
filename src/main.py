@@ -65,14 +65,14 @@ class Image:
     def transform(self, *args, **kwargs):
         raise NotImplementedError
 
-    def get_text(self, *args, **kwargs) -> str:
+    def get_text(self, name, *args, **kwargs) -> str:
         """
         Extract text from thresholded image
 
-        :param: None
+        :param name: image file name
         :returns: text extracted
         """
-        tess_obj = Tesseract(Image.THRESHOLD.IMG_PATH)
+        tess_obj = Tesseract(Image.THRESHOLD.IMG_PATH.format(name=name))
         text = tess_obj.get_text()
 
         return text
