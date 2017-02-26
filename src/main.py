@@ -65,18 +65,6 @@ class Image:
     def transform(self, *args, **kwargs):
         raise NotImplementedError
 
-    def get_text(self, name, *args, **kwargs) -> str:
-        """
-        Extract text from thresholded image
-
-        :param name: image file name
-        :returns: text extracted
-        """
-        tess_obj = Tesseract(Image.THRESHOLD.IMG_PATH.format(name=name))
-        text = tess_obj.get_text()
-
-        return text
-
     def resize(self, resize_by: int, *args, **kwargs):
         """
         Resize large dimesion images
