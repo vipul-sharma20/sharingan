@@ -18,8 +18,8 @@ def main():
         tess_obj = Tesseract(img)
         text = tess_obj.get_text()
         others = len(text) - \
-            sum(c.isalpha() or c.isdigit() or c.isspace for c in text)
-        per = percent(others/len(text))
-        if len(text) > 5:
+            sum(c.isalpha() or c.isdigit() or c.isspace() for c in text)
+        per = percent(others, len(text))
+        if len(text) > 5 and per < 40:
             data.append(text)
     return data
