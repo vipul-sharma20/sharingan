@@ -4,15 +4,17 @@ MAINTAINER Vipul <vipul.sharma20@gmail.com>
 
 RUN apt-get -y update
 RUN apt-get -y install wget unzip \
-                       build-essential cmake git pkg-config libatlas-base-dev gfortran \
-                       libjasper-dev libgtk2.0-dev libavcodec-dev libavformat-dev \
-                       libswscale-dev libjpeg-dev libpng-dev libtiff-dev
-libjasper-dev libv4l-dev
+                       build-essential cmake git pkg-config libatlas-base-dev \
+                       gfortran libjasper-dev libgtk2.0-dev libavcodec-dev libavformat-dev \
+                       libswscale-dev libjpeg-dev libpng-dev libtiff-dev libv4l-dev
+
 RUN apt-get -y install tesseract-ocr
 
 RUN wget https://bootstrap.pypa.io/get-pip.py && python get-pip.py
 ADD requirements.txt .
+
 RUN pip3 install -r requirements.txt
+RUN pip3 install jupyter
 
 RUN wget https://github.com/Itseez/opencv/archive/3.2.0.zip && unzip 3.2.0.zip \
     && mv opencv-3.2.0 /opencv
@@ -43,4 +45,4 @@ RUN cmake -DBUILD_TIFF=ON \
 RUN make -j4
 RUN make install
 
-CMD ["bash"]
+CMD /usr/local/bin/jupyter-notebook --ip=0.0.0.0
