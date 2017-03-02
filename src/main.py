@@ -127,9 +127,9 @@ class Image:
 
         :returns: None
         """
-        blur = cv2.GaussianBlur(self.gray, (13, 13), 0)
-        edged = cv2.Canny(blur, 0, 50)
-        dilated = cv2.dilate(edged, np.ones((5, 5)))
+        blur = cv2.GaussianBlur(self.draw_image, (9, 9), 0)
+        edged = cv2.Canny(blur, 0, 100)
+        dilated = cv2.dilate(edged, np.ones((15, 15)))
 
         _, contours, _ = cv2.findContours(dilated, cv2.RETR_EXTERNAL,
                                           cv2.CHAIN_APPROX_SIMPLE)
@@ -137,8 +137,8 @@ class Image:
             if not self._contour_approx_bad(contour):
                 rect = cv2.boundingRect(contour)
                 x, y, w, h = [r*self.resize_factor for r in rect]
-                b, g, r = random.sample(range(0, 255), 3)
-                cv2.rectangle(self.image, (x,y), ((x+w), (y+h)), (b, g, r), 2)
+                b, g = random.sample(range(0, 255), 2)
+                cv2.rectangle(self.image, (x,y), ((x+w), (y+h)), (b, g, 255), 10)
                 self.crop(name=str(i), **{'start': (x,y),
                                           'end': ((x+w), (y+h))})
 
