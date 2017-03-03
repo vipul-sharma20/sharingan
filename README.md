@@ -4,6 +4,45 @@ Sharingan
 Sharingan is a tool built on Python 3.6 using OpenCV 3.2 to extract news
 content as text from newspaper’s photo and perform news context extraction.
 
+How it works?
+=============
+
+* Capture Image
+![Alt](http://oi68.tinypic.com/2qiwz2o.jpg "original")
+
+* Edge Detection
+![Alt](http://oi66.tinypic.com/34fg0hy.jpg "edged")
+
+* Dilation
+![Alt](http://oi67.tinypic.com/2lw52lz.jpg "dilated")
+
+* Contours
+![Alt](http://oi63.tinypic.com/2pouoow.jpg "contours")
+
+* Contour Approximation and Bounding Box
+![Alt](https://i.imgur.com/LSR98LW.jpg "bb")
+
+Manual Mode
+-----------
+
+![Alt](https://cdn-images-1.medium.com/max/1600/1*6KKm4wGknXonl54dUD6tjQ.gif "drag")
+
+![Alt](https://cdn-images-1.medium.com/max/1600/1*_pOvzvVLvHvcgrpxQL9XeA.gif "thresh")
+
+Context Extraction
+------------------
+
+The segmentation done above gives the following result after context extraction:
+
+        [‘residential terraces’, ‘busy markets’, ‘Puppies’, ‘inhumane conditions’, ‘popular e-commerce sites’, ‘Sriramapuram’, ‘Russell Market’, ‘issue licences’,
+        ‘meeting conditions’, ‘positive impact’, ‘pet owners’, ‘R. Shantha Kumar’, ‘welfare ofﬁcer’, ‘Animal Welfare Board’, ‘India’]
+        [‘Kittie’]
+        [‘Compassion Unlimited’]
+        [‘public spaces’, ‘Animal’, ‘rights activists’, ‘civic body’, ‘Bengaluru’],
+        [‘BENGALURU’, ‘Bruhat Bengaluru Mahanagar Palike’, ‘Dane’, ‘English Mastiff’, ‘Bulldog’, ‘Boxer’, ‘Rottweiler’, ‘Bernard’, ‘Shepherd’, ‘Retriever’,
+        ‘draft guidelines’, ‘sterilisation’, ‘pet dogs ’, ‘Owners’]
+
+
 Installation
 ============
 
