@@ -85,34 +85,3 @@ class Summrizer:
             sen += 1
         return aggregate_score
 
-
-def main():
-    """
-    Exectution starts here.
-    Input's the content to be summarized.
-    """
-    # content = raw_input('Content: ')
-    content = """
-    The BBC has been testing a new service called SoundIndex, which lists the
-    top 1,000 artists based on discussions crawled from Bebo, Last.fm, Google
-    Groups, iTunes, MySpace and YouTube. The top five bands according to
-    SoundIndex right now are Coldplay, Rihanna, The Ting Tings, Duffy and
-    Mariah Carey , but the index is refreshed every six hours. SoundIndex also
-    lets users sort by popular tracks, search by artist, or create customized
-    charts based on music preferences or filters by age range, sex or location.
-    Results can also be limited to just one data source (such as Last.fm).
-    """
-    paragraphs = util.getParagraphs(content)
-    count = 0
-    for paragraph in paragraphs:
-        if paragraph:
-            summ = Summrizer()
-            orig_sentences, indexed = util.getSentences(paragraph)
-            sentences = summ.remove_stopwords(orig_sentences)
-            graph = summ.sentence_graph(sentences)
-            score = summ.build(sentences, graph, orig_sentences)
-        print('Paragraph: ', count)
-        count += 1
-        for i in indexed:
-            print(indexed[i], score[indexed[i]])
-main()
