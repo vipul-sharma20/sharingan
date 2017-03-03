@@ -1,3 +1,11 @@
+Sharingan
+=========
+
+Sharingan is a tool built on Python 3.6 using OpenCV 3.2 to extract news
+content as text from newspaper’s photo and perform news context extraction.
+
+Installation
+============
 
 Installing OpenCV 3.2 from source Python 3.6
 --------------------------------------------
@@ -30,4 +38,27 @@ Installing OpenCV 3.2 from source Python 3.6
 * You will be similar to this: [output](https://gist.github.com/vipul-sharma20/d57a779619f22b2254b66c89c957faf2)
 * `make -j4`
 * make install
+
+Setting up Sharingan
+--------------------
+
+* `git clone git@github.com:vipul-sharma20/sharingan.git`
+* `pip install -r requirements.txt`
+
+**IMPORTANT:** You will require some corpora and trained models
+for the code to run. You can refer to: [http://www.nltk.org/data.html](http://www.nltk.org/data.html)
+
+* Interactive Method:
+
+        In [1]: import nltk
+
+        In [2]: nltk.download()
+
+Docker
+======
+
+Try out the code on Jupyter Notebook
+
+* `docker build -t sharingan-docker .`
+* `docker run -p 8888:8888 -it sharingan-docker`
 
