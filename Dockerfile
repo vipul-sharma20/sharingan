@@ -16,6 +16,8 @@ ADD requirements.txt .
 RUN pip3 install -r requirements.txt
 RUN pip3 install jupyter
 
+RUN python -m nltk.downloader -d /usr/share/nltk_data all
+
 RUN wget https://github.com/Itseez/opencv/archive/3.2.0.zip && unzip 3.2.0.zip \
     && mv opencv-3.2.0 /opencv
 
