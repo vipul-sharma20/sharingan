@@ -7,19 +7,29 @@ content as text from newspaper’s photo and perform news context extraction.
 How it works?
 =============
 
-* Capture Image
+<p align="center">
+    <b>Capture Image</b>
+</p>
 ![Alt](http://oi68.tinypic.com/2qiwz2o.jpg "original")
 
-* Edge Detection
+<p align="center">
+    <b>Canny Edge Detection</b>
+</p>
 ![Alt](http://oi66.tinypic.com/34fg0hy.jpg "edged")
 
-* Dilation
+<p align="center">
+    <b>Dilation</b>
+</p>
 ![Alt](http://oi67.tinypic.com/2lw52lz.jpg "dilated")
 
-* Contours
+<p align="center">
+    <b>Contour Detection</b>
+</p>
 ![Alt](http://oi63.tinypic.com/2pouoow.jpg "contours")
 
-* Contour Approximation and Bounding Box
+<p align="center">
+    <b>Contour Approximation and Bound Box</b>
+</p>
 ![Alt](https://i.imgur.com/LSR98LW.jpg "bb")
 
 Manual Mode
