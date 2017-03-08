@@ -2,6 +2,7 @@ Sharingan
 =========
 
 [![Build Status](https://travis-ci.org/vipul-sharma20/sharingan.svg?branch=master)](https://travis-ci.org/vipul-sharma20/sharingan)
+[![Docker Automated build](https://img.shields.io/docker/automated/vipul20/sharingan.svg)]()
 
 Sharingan is a tool built on Python 3.6 using OpenCV 3.2 to extract news
 content as text from newspaper’s photo and perform news context extraction.
