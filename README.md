@@ -116,6 +116,19 @@ Try out the code on Jupyter Notebook
 * `docker build -t sharingan-docker .`
 * `docker run -p 8888:8888 -it sharingan-docker`
 
+Thanks to
+=========
+
+I am no wizard. Big thanks to people who came up with these solutions and posts:
+
+* [https://erget.wordpress.com/](https://erget.wordpress.com/2014/03/13/building-an-interactive-gui-with-opencv/)
+* [https://www.scivision.co/](https://www.scivision.co/anaconda-python-opencv3/)
+* [https://enumap.wordpress.com/](https://enumap.wordpress.com/2012/11/23/python-opencv-resize-image/)
+* [http://stackoverflow.com/questions/15341538/](http://stackoverflow.com/questions/15341538/numpy-opencv-2-how-do-i-crop-non-rectangular-region)
+* [http://stackoverflow.com/questions/30310430/](http://stackoverflow.com/questions/30310430/opencv-draw-a-rectangle-in-a-picture-were-never-shown)
+* [http://www.pyimagesearch.com/](http://www.pyimagesearch.com/2015/02/09/removing-contours-image-using-python-opencv/)
+* [http://to.predict.ch/](http://to.predict.ch/hacking/2017/02/12/opencv-with-docker.html)
+
 LICENSE
 =======
 
@@ -145,17 +158,4 @@ This project uses following external libraries, which have their own licenses:
 * NLTK (https://github.com/nltk/nltk/blob/develop/LICENSE.txt) [Apache]
 * OpenCV (https://github.com/opencv/opencv/blob/master/LICENSE) [BSD]
 * NumPy (https://github.com/numpy/numpy/blob/master/LICENSE.txt)
-
-Thanks to
-=========
-
-I am no wizard. Big thanks to people who came up with these solutions and posts:
-
-* [https://erget.wordpress.com/](https://erget.wordpress.com/2014/03/13/building-an-interactive-gui-with-opencv/)
-* [https://www.scivision.co/](https://www.scivision.co/anaconda-python-opencv3/)
-* [https://enumap.wordpress.com/](https://enumap.wordpress.com/2012/11/23/python-opencv-resize-image/)
-* [http://stackoverflow.com/questions/15341538/](http://stackoverflow.com/questions/15341538/numpy-opencv-2-how-do-i-crop-non-rectangular-region)
-* [http://stackoverflow.com/questions/30310430/](http://stackoverflow.com/questions/30310430/opencv-draw-a-rectangle-in-a-picture-were-never-shown)
-* [http://www.pyimagesearch.com/](http://www.pyimagesearch.com/2015/02/09/removing-contours-image-using-python-opencv/)
-* [http://to.predict.ch/](http://to.predict.ch/hacking/2017/02/12/opencv-with-docker.html)
 
