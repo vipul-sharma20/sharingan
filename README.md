@@ -7,7 +7,7 @@ Sharingan
 Sharingan is a tool built on Python 3.6 using OpenCV 3.2 to extract news
 content as text from newspaper’s photo and perform news context extraction.
 
-For more details and explanation, please refer the blog post here: [http://vipul.xyz](http://www.vipul.xyz/2017/03/sharingan-newspaper-text-and-context.html)
+For more details and explanation, please refer the blog post here: [http://vipul.xyz/2017/03/sharingan-newspaper-text-and-context.html](http://www.vipul.xyz/2017/03/sharingan-newspaper-text-and-context.html)
 
 How it works?
 =============
