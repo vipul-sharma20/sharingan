@@ -18,22 +18,22 @@ News Extraction
 <p align="center">
     <b>Capture Image</b>
 </p>
-![Alt](http://oi68.tinypic.com/2qiwz2o.jpg "original")
+![Alt](https://i.imgur.com/6DklnQt.jpg "original")
 
 <p align="center">
     <b>Canny Edge Detection</b>
 </p>
-![Alt](http://oi66.tinypic.com/34fg0hy.jpg "edged")
+![Alt](https://i.imgur.com/voDsUEg.jpg "edged")
 
 <p align="center">
     <b>Dilation</b>
 </p>
-![Alt](http://oi67.tinypic.com/2lw52lz.jpg "dilated")
+![Alt](https://i.imgur.com/zMq2vgH.jpg "dilated")
 
 <p align="center">
     <b>Contour Detection</b>
 </p>
-![Alt](http://oi63.tinypic.com/2pouoow.jpg "contours")
+![Alt](https://i.imgur.com/zbh5UAV.jpg "contours")
 
 <p align="center">
     <b>Contour Approximation and Bound Box</b>
