@@ -18,27 +18,32 @@ News Extraction
 <p align="center">
     <b>Capture Image</b>
 </p>
-![Alt](https://i.imgur.com/6DklnQt.jpg "original")
+
+![Alt](https://i.imgur.com/6DklnQt.jpg)
 
 <p align="center">
     <b>Canny Edge Detection</b>
 </p>
-![Alt](https://i.imgur.com/voDsUEg.jpg "edged")
+
+![Alt](https://i.imgur.com/voDsUEg.jpg)
 
 <p align="center">
     <b>Dilation</b>
 </p>
-![Alt](https://i.imgur.com/zMq2vgH.jpg "dilated")
+
+![Alt](https://i.imgur.com/zMq2vgH.jpg)
 
 <p align="center">
     <b>Contour Detection</b>
 </p>
-![Alt](https://i.imgur.com/zbh5UAV.jpg "contours")
+
+![Alt](https://i.imgur.com/zbh5UAV.jpg)
 
 <p align="center">
     <b>Contour Approximation and Bound Box</b>
 </p>
-![Alt](https://i.imgur.com/LSR98LW.jpg "bb")
+
+![Alt](https://i.imgur.com/LSR98LW.jpg)
 
 Manual Mode
 -----------
