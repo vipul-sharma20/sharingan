@@ -137,6 +137,11 @@ I am no wizard. Big thanks to people who came up with these solutions and posts:
 * [http://www.pyimagesearch.com/](http://www.pyimagesearch.com/2015/02/09/removing-contours-image-using-python-opencv/)
 * [http://to.predict.ch/](http://to.predict.ch/hacking/2017/02/12/opencv-with-docker.html)
 
+The Name?
+=========
+
+See here: [Sharingan](naruto.wikia.com/wiki/Sharingan)
+
 LICENSE
 =======
 
