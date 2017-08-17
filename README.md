@@ -140,7 +140,7 @@ I am no wizard. Big thanks to people who came up with these solutions and posts:
 The Name?
 =========
 
-See here: [Sharingan](naruto.wikia.com/wiki/Sharingan)
+See here: [Sharingan](http://naruto.wikia.com/wiki/Sharingan)
 
 LICENSE
 =======
